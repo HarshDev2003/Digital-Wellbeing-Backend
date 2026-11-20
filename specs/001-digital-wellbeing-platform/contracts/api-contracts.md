@@ -226,6 +226,32 @@
 }
 ```
 
+### 4.2 Historical Usage Trends
+- **GET** `/analytics/history?start_date=2026-11-01&end_date=2026-11-20&device_id=optional-uuid&page=1&page_size=20`
+- **Headers**: `Authorization: Bearer <TOKEN>`
+- **Response** (`200 OK`):
+```json
+{
+  "start_date": "2026-11-01",
+  "end_date": "2026-11-20",
+  "pagination": {
+    "page": 1,
+    "page_size": 20,
+    "total_records": 20,
+    "total_pages": 1
+  },
+  "items": [
+    {
+      "calendar_date": "2026-11-20",
+      "total_screen_time_seconds": 12600,
+      "total_unlocks": 42,
+      "top_category": "Entertainment",
+      "goal_met": true
+    }
+  ]
+}
+```
+
 ---
 
 ## 5. Goals & Limits Endpoints
@@ -304,6 +330,18 @@
 }
 ```
 
+*Fallback Response (When <3 days of recorded usage)* (`200 OK`):
+```json
+{
+  "insight_id": null,
+  "status": "INSUFFICIENT_DATA",
+  "title": "More Usage Data Needed",
+  "summary": "We require at least 3 days of recorded device activity before generating personalized weekly habit assessments. Keep your mobile companion connected to unlock insights.",
+  "minimum_days_required": 3,
+  "recorded_days": 1
+}
+```
+
 ---
 
 ## 7. Privacy & Data Lifecycle Endpoints
@@ -338,5 +376,47 @@
 {
   "status": "purged",
   "message": "User account and all associated telemetry, summaries, and device registrations have been permanently deleted."
+}
+```
+
+---
+
+## 8. Standardized Error Response Formats
+
+All backend error payloads strictly adhere to standard HTTP status codes and JSON formatting:
+
+### 8.1 Unauthorized (`401 Unauthorized`)
+Returned when an access token is expired, missing, or has an invalid signature.
+```json
+{
+  "error_code": "UNAUTHORIZED",
+  "message": "Authentication token has expired or is invalid.",
+  "timestamp": "2026-11-20T18:50:00Z"
+}
+```
+
+### 8.2 Forbidden (`403 Forbidden`)
+Returned when an authenticated user attempts to access a resource (device, export, goal) belonging to another user account.
+```json
+{
+  "error_code": "FORBIDDEN",
+  "message": "You do not have permission to access the requested resource.",
+  "timestamp": "2026-11-20T18:50:00Z"
+}
+```
+
+### 8.3 Validation Error (`422 Unprocessable Entity`)
+Returned when request parameters or payload fail Pydantic schema validation.
+```json
+{
+  "error_code": "VALIDATION_ERROR",
+  "message": "Input validation failed.",
+  "details": [
+    {
+      "field": "body.timezone",
+      "issue": "Invalid IANA timezone string."
+    }
+  ],
+  "timestamp": "2026-11-20T18:50:00Z"
 }
 ```

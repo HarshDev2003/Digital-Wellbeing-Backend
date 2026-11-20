@@ -17,19 +17,19 @@
 
 **Purpose**: Initialize repository structure, package environments, and project configurations across backend, mobile, and web.
 
-- [ ] T001 Initialize backend modular monolith project structure and virtual environment in `backend/requirements.txt`
+- [X] T001 Initialize backend modular monolith project structure and virtual environment in `backend/requirements.txt`
   - *Dependencies*: None
   - *Expected Output*: Clean Python 3.11+ environment with FastAPI, SQLAlchemy 2.0, Alembic, Pydantic v2, and Pytest installed
   - *Validation*: `python -m pytest --version` executes successfully
-- [ ] T002 [P] Initialize Flutter mobile companion application workspace in `mobile/pubspec.yaml`
+- [X] T002 [P] Initialize Flutter mobile companion application workspace in `mobile/pubspec.yaml`
   - *Dependencies*: None
   - *Expected Output*: Flutter 3.22+ project configured with `drift`, `sqlite3`, `path_provider`, and `http`/`dio`, excluding heavy UI or ML packages
   - *Validation*: `flutter pub get` and `flutter test` execute with zero errors
-- [ ] T003 [P] Initialize Next.js web analytics dashboard in `frontend/package.json`
+- [X] T003 [P] Initialize Next.js web analytics dashboard in `frontend/package.json`
   - *Dependencies*: None
   - *Expected Output*: Next.js 14+ (App Router), React 18/19, TypeScript, Tailwind CSS, Lucide icons, and Recharts installed
   - *Validation*: `pnpm build` or `npm run build` succeeds
-- [ ] T004 [P] Configure unified linting, formatting, and pre-commit checks in `.pre-commit-config.yaml`
+- [X] T004 [P] Configure unified linting, formatting, and pre-commit checks in `.pre-commit-config.yaml`
   - *Dependencies*: None
   - *Expected Output*: Automated linters (`ruff` for Python, `flutter analyze` for Dart, `eslint`/`prettier` for TypeScript)
   - *Validation*: All lint commands run cleanly across the workspace
@@ -40,39 +40,39 @@
 
 **Purpose**: Core application infrastructure that MUST be complete before ANY user story can be implemented.
 
-- [ ] T005 [P] Implement core backend settings and environment configuration in `backend/app/core/config.py`
+- [X] T005 [P] Implement core backend settings and environment configuration in `backend/app/core/config.py`
   - *Dependencies*: T001
   - *Expected Output*: Pydantic `Settings` class loading `DATABASE_URL`, `JWT_SECRET_KEY`, `GEMINI_API_KEY`, and CORS origins
   - *Validation*: Unit test loading settings with sample `.env` file passes
-- [ ] T006 [P] Implement asynchronous SQLAlchemy database engine and session dependency in `backend/app/core/database.py`
+- [X] T006 [P] Implement asynchronous SQLAlchemy database engine and session dependency in `backend/app/core/database.py`
   - *Dependencies*: T001, T005
   - *Expected Output*: `AsyncEngine`, `async_sessionmaker`, and `get_db` FastAPI dependency
   - *Validation*: Script connecting to PostgreSQL test instance succeeds
-- [ ] T007 [P] Implement cryptographic security utilities (Argon2id hashing, JWT encode/decode) in `backend/app/core/security.py`
+- [X] T007 [P] Implement cryptographic security utilities (Argon2id hashing, JWT encode/decode) in `backend/app/core/security.py`
   - *Dependencies*: T001, T005
   - *Expected Output*: `hash_password`, `verify_password`, `create_access_token`, `create_refresh_token`, and JWT validator
   - *Validation*: Unit tests verify password hashing roundtrip and token expiration
-- [ ] T008 [P] Configure Alembic migrations and create initial database schema migration in `backend/alembic/versions/001_initial_schema.py`
+- [X] T008 [P] Configure Alembic migrations and create initial database schema migration in `backend/alembic/versions/001_initial_schema.py`
   - *Dependencies*: T006, `data-model.md`
   - *Expected Output*: Migration script creating all 13 tables (`users`, `devices`, `app_usage_events`, `daily_usage_summaries`, etc.) with UUID PKs and indexes
   - *Validation*: `alembic upgrade head` creates all tables with constraints in PostgreSQL
-- [ ] T009 [P] Implement PostgreSQL-backed asynchronous task queue worker in `backend/app/core/task_queue.py`
+- [X] T009 [P] Implement PostgreSQL-backed asynchronous task queue worker in `backend/app/core/task_queue.py`
   - *Dependencies*: T006, T008
   - *Expected Output*: Task enqueueing and worker consumer using `app_tasks` with `FOR UPDATE SKIP LOCKED` (replacing Redis)
   - *Validation*: Asynchronous test enqueues and processes a dummy background job
-- [ ] T010 [P] Implement base API router and global exception handlers in `backend/app/main.py`
+- [X] T010 [P] Implement base API router and global exception handlers in `backend/app/main.py`
   - *Dependencies*: T005, T006
   - *Expected Output*: FastAPI app instance mounting `/api/v1` routes with standardized JSON error formatting
   - *Validation*: `GET /docs` serves OpenAPI documentation
-- [ ] T011 [P] Implement Flutter embedded Drift/SQLite database and base DAOs in `mobile/lib/core/database/app_database.dart`
+- [X] T011 [P] Implement Flutter embedded Drift/SQLite database and base DAOs in `mobile/lib/core/database/app_database.dart`
   - *Dependencies*: T002
   - *Expected Output*: Drift database class with tables for local events and sync queue
   - *Validation*: Drift schema migration and DAO unit tests pass in `flutter test`
-- [ ] T012 [P] Implement Flutter HTTP REST client with authentication interceptor in `mobile/lib/core/network/api_client.dart`
+- [X] T012 [P] Implement Flutter HTTP REST client with authentication interceptor in `mobile/lib/core/network/api_client.dart`
   - *Dependencies*: T002
   - *Expected Output*: Network client with automated JWT bearer attachment and retry logic
   - *Validation*: Mock HTTP client tests verify token injection and error handling
-- [ ] T013 [P] Implement Web dashboard layout, theme, and typed API fetch client in `frontend/src/lib/api.ts`
+- [X] T013 [P] Implement Web dashboard layout, theme, and typed API fetch client in `frontend/src/lib/api.ts`
   - *Dependencies*: T003
   - *Expected Output*: Reusable REST client with auth token handling and base dashboard sidebar navigation
   - *Validation*: Frontend test renders navigation layout and handles mock fetch calls

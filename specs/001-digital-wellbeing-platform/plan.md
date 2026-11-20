@@ -192,7 +192,7 @@ Fully detailed in [contracts/api-contracts.md](contracts/api-contracts.md):
 - **Data Isolation**: All queries enforce `WHERE user_id = :current_user_id` extracted from verified JWT tokens. Cross-user access is impossible.
 
 ### 9. Data Synchronization and Offline Handling
-- **Offline First**: All events are immediately written to local SQLite storage on the mobile device.
+- **Offline First**: All events are immediately written to local SQLite storage on the mobile device, maintaining up to a 30-day or 50,000-event buffer capacity with FIFO rollover.
 - **Opportunistic Sync**: Triggered upon network connection recovery or periodic WorkManager/BGTask execution.
 - **Idempotency**: Retransmitted batches with duplicate event UUIDs are skipped via `ON CONFLICT DO NOTHING`, returning HTTP 200 so the client clears its queue.
 
@@ -208,6 +208,7 @@ Fully detailed in [contracts/api-contracts.md](contracts/api-contracts.md):
 ### 12. AI Integration Architecture
 - Pre-aggregated daily summaries and category percentages are formatted into structured prompts for the Google Gemini API.
 - Zero raw personal messages, notification bodies, or user identifiers are ever transmitted to Gemini.
+- If fewer than 3 days of usage history exist, an informative onboarding prompt is returned without calling Gemini; if Gemini API calls fail or timeout, the web dashboard displays a graceful retry state.
 - Responses are validated against Pydantic schemas and persisted in `user_insights`.
 
 ### 13. Testing Strategy

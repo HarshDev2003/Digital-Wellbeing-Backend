@@ -137,7 +137,8 @@ As a privacy-conscious individual, I want full transparency and sovereignty over
 
 ### Edge Cases
 
-- **Extended Offline Duration**: When a device remains disconnected for multiple days or weeks, the local storage must buffer events without memory exhaustion or database corruption, compressing or batching uploads when connectivity resumes.
+- **Extended Offline Duration**: When a device remains disconnected for multiple days or weeks, local storage MUST buffer events up to a maximum retention limit of 30 days or 50,000 events. If storage limits are reached, acknowledged records are pruned first, followed by FIFO rollover of oldest events with a user notification to reconnect.
+- **AI Service Availability & Minimum Data**: When an account has fewer than 3 days of recorded usage, the AI insights service returns a structured informational state explaining that additional activity data is needed before habit analysis can begin. If external Gemini API calls fail or timeout, the web dashboard displays a graceful retry banner without disrupting core analytics.
 - **Timezone Transitions & Daylight Saving Time**: When a user travels across timezones or encounters DST transitions, raw timestamps stored in UTC must not drift or generate overlapping sessions; daily summaries must recalculate according to the active local calendar day.
 - **Mid-Session Permission Revocation**: If a user disables Usage Access or Screen Time permissions in system settings while the app is backgrounded, the collector must detect the loss of permission gracefully, pause collection, and notify the user on the next app open without crashing.
 - **Aggressive OS Process Termination**: Mobile operating systems (e.g., aggressive battery optimizers on OEM Android builds) may terminate background jobs; scheduled tasks must employ standard platform persistent job schedulers to restart collection upon next device unlock or power event.
@@ -170,7 +171,7 @@ As a privacy-conscious individual, I want full transparency and sovereignty over
 - **FR-012**: System MUST NEVER report missing or unsupported platform metrics as zero consumption.
 
 #### 4. Offline Storage & Resilient Synchronization
-- **FR-013**: Mobile companion MUST store all captured activity records locally in an embedded persistent database prior to network transmission.
+- **FR-013**: Mobile companion MUST store all captured activity records locally in an embedded persistent database prior to network transmission, maintaining an offline buffer capacity of up to 30 days or 50,000 events with deterministic FIFO pruning.
 - **FR-014**: Mobile companion MUST batch pending local records and opportunistically synchronize with the backend service during network availability and background execution windows.
 - **FR-015**: Backend service MUST support idempotent synchronization by indexing client-assigned event UUIDs; retransmitted batches or duplicate event UUIDs MUST be acknowledged as successful while skipping redundant ingestion, preventing inflated usage metrics.
 - **FR-016**: Mobile companion MUST mark local records as synchronized only after receiving explicit positive acknowledgment from the backend service.
@@ -191,14 +192,14 @@ As a privacy-conscious individual, I want full transparency and sovereignty over
 #### 7. AI-Powered Habit Insights
 - **FR-026**: System MUST generate personalized usage insights and recommendations using the Google Gemini service.
 - **FR-027**: AI processing pipeline MUST ingest only aggregated usage summaries, category totals, and temporal trend metrics—never raw device telemetry, user identifiers, or personal communications.
-- **FR-028**: System MUST produce structured habit assessments identifying peak usage windows, rapid category spikes, and potential night-time screen disruptions.
-- **FR-029**: Web dashboard MUST display historical AI insights and allow users to view actionable suggestions for digital habit improvement.
+- **FR-028**: System MUST produce structured habit assessments identifying peak usage windows, rapid category spikes, and potential night-time screen disruptions; if external AI service calls fail or timeout, the system MUST log the failure and return a recoverable error state for the client without crashing.
+- **FR-029**: Web dashboard MUST display historical AI insights and allow users to view actionable suggestions for digital habit improvement; if fewer than 3 days of historical summaries exist, the system MUST display an informative onboarding placeholder prompt.
 
 #### 8. Privacy, Security & Data Lifecycle
 - **FR-030**: System MUST enforce strict user-level data isolation, ensuring users can only access their own devices and usage telemetry.
 - **FR-031**: System MUST NEVER collect, inspect, or store notification contents, text messages, browsing contents, keystrokes, or screen captures.
 - **FR-032**: All data in transit between mobile companion, backend service, and web dashboard MUST be encrypted using TLS/HTTPS.
-- **FR-033**: System MUST provide a self-service data export function allowing users to download their complete activity history in standard JSON format.
+- **FR-033**: System MUST provide a self-service data export function requiring authenticated session and password re-verification, allowing users to securely download their complete activity history in standard JSON format.
 - **FR-034**: System MUST provide an irrevocable account deletion function that permanently purges user profile data, device associations, raw events, aggregated summaries, and generated insights within 5 seconds of confirmation.
 
 ---
