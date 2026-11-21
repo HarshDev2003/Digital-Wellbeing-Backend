@@ -31,4 +31,4 @@
 
 ## Notes
 
-All specification quality criteria passed validation (16/16). 5 core architectural and product clarifications were formally resolved and integrated into the specification (Active screen time metric, screen-lock bound app sessions, platform-maximal app limit enforcement, client UUID idempotent deduplication, and per-app network telemetry scoping). Ready for architectural planning (`/speckit-plan`).
+All specification quality criteria passed validation (16/16). 5 core architectural and product clarifications were formally resolved and integrated into the specification (Active screen time metric, screen-lock bound app sessions, platform-maximal app limit enforcement, client UUID idempotent deduplication, and per-app network telemetry scoping). Implementation scope for the active track is formally designated as Backend Only; mobile companion and web dashboard client tracks are implemented separately. Ready for architectural planning (`/speckit-plan`).

@@ -19,6 +19,21 @@
 - Q: How should duplicate usage events be handled when retransmitted during background synchronization? → A: Client-Assigned UUIDs with Idempotent Ingestion (Client generates a UUID for each usage event; backend detects duplicates by UUID, skips re-insertion, and returns success to clear client queues).
 - Q: Which network usage metrics should be tracked on Android, and how should network tracking be represented on iOS? → A: Per-App Wi-Fi & Cellular on Android; Explicit Restriction on iOS (Android tracks daily uploaded/downloaded bytes partitioned by Wi-Fi and mobile data per app; iOS displays an informational "Platform Restricted" banner with zero false data).
 
+### Session 2026-11-21 (Scope Boundary Amendment)
+- Q: What is the implementation scope for the current development phase? → A: **Backend Only**. Current development is strictly focused on implementing the complete Backend Modular Monolith (FastAPI, PostgreSQL, SQLAlchemy 2.0 async, Alembic migrations, PostgreSQL Task Queue, Gemini AI insights integration, and comprehensive API test suites).
+- Q: When and how will the mobile companion and web dashboard be built? → A: **Implemented Separately**. The Flutter mobile companion (Android & iOS) and Next.js web dashboard are fully specified and contracted in this specification to ensure complete architectural compatibility, but their implementation code is decoupled and deferred to separate, dedicated implementation tracks.
+
+---
+
+## Scope & Implementation Phasing
+
+> [!IMPORTANT]
+> **Active Implementation Scope: Backend Only**
+> - **In-Scope (Current Phase)**: All server-side components: Identity & Authentication, Device Registration & Capabilities, Telemetry Ingestion & Idempotent Deduplication, Timezone-aware Daily Aggregation, Usage Goals & Limit Auditing, Network Ingestion, Gemini-powered AI Insights Service, PostgreSQL Task Queue Worker, cascading data export/deletion, and full integration test suites.
+> - **Deferred (Separate Implementation Tracks)**:
+>   - **Flutter Mobile Companion**: Native Android/iOS platform channels, background WorkManager sync, and Drift local caching will be implemented in a separate mobile track.
+>   - **Next.js Web Dashboard**: Frontend pages, Recharts telemetry visualizations, and Next.js UI components will be implemented in a separate web track.
+
 ---
 
 ## User Scenarios & Testing *(mandatory)*

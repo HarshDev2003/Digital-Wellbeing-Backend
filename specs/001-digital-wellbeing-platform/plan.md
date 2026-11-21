@@ -8,22 +8,28 @@
 
 ## Summary
 
-The Digital Wellbeing platform provides personal digital activity tracking across Android and iOS devices, centralized in a responsive Next.js web dashboard. The architecture follows a strict **modular monolith** backend built with Python FastAPI and PostgreSQL (with zero Redis/microservice overhead). The mobile client is a single lightweight Flutter application focused exclusively on unobtrusive local data collection, offline caching, and opportunistic background synchronization. Analytics, historical trend aggregations, and Gemini-powered AI habit recommendations reside on the server and are visualized on the web.
+The Digital Wellbeing platform provides personal digital activity tracking across Android and iOS devices, centralized in a responsive Next.js web dashboard. The architecture follows a strict **modular monolith** backend built with Python FastAPI and PostgreSQL (with zero Redis/microservice overhead). 
+
+> [!IMPORTANT]
+> **Implementation Scope Delineation**:
+> - **Current Active Implementation**: **Backend Only**. This repository/phase implements the complete backend monolith (FastAPI, PostgreSQL schemas, async SQLAlchemy, Alembic migrations, PostgreSQL-backed asynchronous task queue, Gemini AI insights integration, and integration/unit test suites).
+> - **Separately Implemented Components**: The Flutter mobile companion app and Next.js web dashboard are architected herein to establish complete API contracts, data models, and synchronization protocols, but their codebases will be implemented in separate dedicated tracks.
 
 ---
 
 ## Technical Context
 
+- **Active Implementation Scope**: **Backend Modular Monolith Only**
 - **Backend Language/Version**: Python 3.11+
 - **Backend Framework**: FastAPI, Pydantic v2, SQLAlchemy 2.0 (async), Alembic
-- **Mobile Language/Version**: Flutter 3.22+, Dart 3.4+
-- **Mobile Framework/Storage**: Flutter platform channels, `drift` / `sqlite3` (embedded local database)
-- **Web Language/Version**: TypeScript 5.x, React 18/19, Next.js 14+ (App Router), Tailwind CSS
 - **Primary Database**: PostgreSQL 16+ (UUID primary keys, UTC storage, composite deduplication indices)
 - **Infrastructure / Caching**: No Redis; database-backed job queue (`app_tasks` with `FOR UPDATE SKIP LOCKED`) and FastAPI `BackgroundTasks`
 - **AI Integration**: Google Gemini API (`gemini-1.5-flash` / `gemini-2.0-flash`) via `google-genai` SDK
-- **Testing**: `pytest` + `pytest-asyncio` + `httpx` (backend); `flutter_test` (mobile); `vitest` + React Testing Library (web)
+- **Testing**: `pytest` + `pytest-asyncio` + `httpx` (comprehensive backend API & unit test coverage)
 - **Security & Privacy**: JWT (access/rotating refresh tokens), Argon2id/bcrypt, TLS 1.3, granular consent audit trail, cascading immediate hard deletion
+- **Client Components (Implemented Separately)**:
+  - **Mobile Companion**: Flutter 3.22+, Dart 3.4+, Drift/SQLite local buffering, WorkManager/BGTaskScheduler.
+  - **Web Dashboard**: Next.js 14+ (App Router), React 18/19, TypeScript 5.x, Tailwind CSS, Recharts.
 
 ---
 

@@ -138,6 +138,9 @@ Engineers MUST rigorously reject unwarranted complexity. Every added third-party
    - No hardcoded secrets, API tokens, or private credentials in version control.
    - Verified authentication middleware on all private endpoints.
    - User-isolation filters on all database queries (preventing multi-tenant or cross-user data leakage).
+4. **Implementation Track Phasing**:
+   - The current active implementation in this repository is strictly focused on the Backend Modular Monolith (FastAPI, PostgreSQL, Task Queue, Gemini AI service, and RESTful APIs).
+   - The Flutter mobile companion application and Next.js web dashboard are specified for architectural alignment and contract parity, but are implemented separately in dedicated client development tracks.
 
 ## Governance
 
@@ -157,4 +160,4 @@ Engineers MUST rigorously reject unwarranted complexity. Every added third-party
 4. **Compliance Enforcement**:
    Every code review and pull request MUST explicitly verify adherence to this constitution. Any deviation without an approved amendment MUST result in a request for changes.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-20
+**Version**: 1.0.1 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-21

@@ -1,8 +1,12 @@
-# Quickstart & Verification Guide: Digital Wellbeing Platform
+# Quickstart & Verification Guide: Digital Wellbeing Platform (Backend Monolith)
 
 **Feature**: `001-digital-wellbeing-platform` | **Date**: 2026-11-20
 
-This guide provides step-by-step instructions to set up the development environment, run the database migrations, launch the FastAPI modular monolith, simulate client telemetry synchronization, and verify the Next.js web dashboard.
+This guide provides step-by-step instructions to set up the development environment, run the database migrations, launch the FastAPI modular monolith, simulate client telemetry synchronization, and verify the backend API endpoints.
+
+> [!IMPORTANT]
+> **Active Implementation Scope: Backend Only**
+> This quickstart guide is focused on the **Backend Modular Monolith** (Python FastAPI, PostgreSQL, and Gemini AI integration). Mobile companion and Web frontend client applications are implemented separately in their own dedicated tracks.
 
 ---
 
@@ -10,9 +14,8 @@ This guide provides step-by-step instructions to set up the development environm
 
 - **Python**: 3.11 or newer
 - **PostgreSQL**: 15 or 16 running locally (or via Docker)
-- **Node.js**: 18.x or 20.x (LTS) with `pnpm` or `npm`
-- **Flutter**: 3.22+ with Dart 3.4+ (for mobile verification)
 - **Gemini API Key**: Valid Google AI Studio API key (set in environment as `GEMINI_API_KEY`)
+- *(Note: Node.js and Flutter are used in separate client implementation tracks)*
 
 ---
 

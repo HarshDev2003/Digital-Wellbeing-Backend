@@ -4,6 +4,9 @@
 
 This document consolidates architectural evaluations, technical decisions, and validated best practices for the Digital Wellbeing platform implementation.
 
+> [!NOTE]
+> **Implementation Scope Note**: The current active implementation track is strictly **Backend Only** (FastAPI, PostgreSQL, Task Queue, and Gemini AI). The research and contracts for Flutter mobile companion and Next.js web dashboard serve as specifications for client implementations executed in separate tracks.
+
 ---
 
 ## 1. Backend Architecture: Modular Monolith
