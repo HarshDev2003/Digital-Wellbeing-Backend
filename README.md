@@ -396,21 +396,25 @@ curl -X POST http://localhost:8000/api/v1/devices/register \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "platform": "ANDROID",
+    "device_identifier": "11111111-2222-3333-4444-555555555555",
+    "platform": "android",
     "device_model": "Pixel 8 Pro",
     "os_version": "Android 14",
-    "app_version": "1.0.0"
+    "app_version": "1.0.0",
+    "capabilities": {
+      "supports_network_tracking": true,
+      "supports_app_shielding": false,
+      "has_usage_permission": true,
+      "has_screen_time_permission": false
+    }
   }'
 ```
-**Response (200 OK):**
+**Response (201 Created):**
 ```json
 {
   "device_id": "c1f8872b-819a-4c91-9e73-1256ff258167",
-  "platform": "ANDROID",
-  "device_model": "Pixel 8 Pro",
-  "os_version": "Android 14",
-  "app_version": "1.0.0",
-  "last_seen_at": "2026-11-21T06:05:00Z"
+  "status": "registered",
+  "registered_at": "2026-11-21T06:05:00Z"
 }
 ```
 

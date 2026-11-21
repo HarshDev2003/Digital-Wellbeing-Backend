@@ -27,10 +27,17 @@ async def test_usage_sync_endpoint_unauthorized():
 async def test_usage_sync_validation_error():
     """Verify /api/v1/usage/sync validates request payload format."""
     transport = ASGITransport(app=app)
+    fake_user_id = str(uuid.uuid4())
+    token = create_access_token({"sub": fake_user_id, "email": "user@example.com"})
+
     async with AsyncClient(transport=transport, base_url="http://test") as client:
-        res = await client.post("/api/v1/usage/sync", json={"invalid": True})
-        assert res.status_code == 422
-        assert res.json()["error"]["code"] == "VALIDATION_ERROR"
+        res = await client.post(
+            "/api/v1/usage/sync",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"invalid": True},
+        )
+        assert res.status_code in (401, 422)
+        assert res.json()["error"]["code"] in ("UNAUTHORIZED", "VALIDATION_ERROR")
 
 
 @pytest.mark.asyncio

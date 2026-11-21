@@ -187,26 +187,38 @@ Invoked immediately after login and during app launch to register the physical p
 - **Endpoint**: `/devices/register`
 - **Auth**: Required (`Bearer <access_token>`)
 
-#### Request Body
+#### Request Body (Full)
 ```json
 {
-  "platform": "ANDROID",
-  "device_model": "Google Pixel 8",
-  "os_version": "Android 14 (API 34)",
-  "app_version": "1.0.0"
-}
-```
-*Valid `platform` values*: `"ANDROID"`, `"IOS"`, `"DESKTOP"`.
-
-#### Response (`200 OK`)
-```json
-{
-  "device_id": "c1f8872b-819a-4c91-9e73-1256ff258167",
-  "platform": "ANDROID",
+  "device_identifier": "11111111-2222-3333-4444-555555555555",
+  "platform": "android",
   "device_model": "Google Pixel 8",
   "os_version": "Android 14 (API 34)",
   "app_version": "1.0.0",
-  "last_seen_at": "2026-11-21T06:05:00Z"
+  "capabilities": {
+    "supports_network_tracking": true,
+    "supports_app_shielding": false,
+    "has_usage_permission": true,
+    "has_screen_time_permission": false
+  }
+}
+```
+
+#### Request Body (Minimal - optional fields auto-default)
+```json
+{
+  "platform": "android",
+  "device_model": "Google Pixel 8"
+}
+```
+*Valid `platform` values*: `"android"`, `"ios"`, or `"desktop"` (case-insensitive).
+
+#### Response (`201 Created`)
+```json
+{
+  "device_id": "c1f8872b-819a-4c91-9e73-1256ff258167",
+  "status": "registered",
+  "registered_at": "2026-11-21T06:05:00Z"
 }
 ```
 *Action*: Store `device_id` locally. All subsequent background sync calls (`/usage/sync`) require this UUID.

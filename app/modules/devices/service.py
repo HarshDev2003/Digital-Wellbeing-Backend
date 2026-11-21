@@ -46,18 +46,19 @@ class DeviceService:
             device.os_version = req.os_version
             device.app_version = req.app_version
 
+            caps = req.capabilities or DeviceCapabilitySchema()
             if device.capabilities:
-                device.capabilities.supports_network_tracking = req.capabilities.supports_network_tracking
-                device.capabilities.supports_app_shielding = req.capabilities.supports_app_shielding
-                device.capabilities.has_usage_permission = req.capabilities.has_usage_permission
-                device.capabilities.has_screen_time_permission = req.capabilities.has_screen_time_permission
+                device.capabilities.supports_network_tracking = caps.supports_network_tracking
+                device.capabilities.supports_app_shielding = caps.supports_app_shielding
+                device.capabilities.has_usage_permission = caps.has_usage_permission
+                device.capabilities.has_screen_time_permission = caps.has_screen_time_permission
             else:
                 capabilities = DeviceCapability(
                     device_id=device.id,
-                    supports_network_tracking=req.capabilities.supports_network_tracking,
-                    supports_app_shielding=req.capabilities.supports_app_shielding,
-                    has_usage_permission=req.capabilities.has_usage_permission,
-                    has_screen_time_permission=req.capabilities.has_screen_time_permission,
+                    supports_network_tracking=caps.supports_network_tracking,
+                    supports_app_shielding=caps.supports_app_shielding,
+                    has_usage_permission=caps.has_usage_permission,
+                    has_screen_time_permission=caps.has_screen_time_permission,
                 )
                 db.add(capabilities)
         else:
@@ -73,12 +74,13 @@ class DeviceService:
             db.add(device)
             await db.flush()
 
+            caps = req.capabilities or DeviceCapabilitySchema()
             capabilities = DeviceCapability(
                 device_id=device.id,
-                supports_network_tracking=req.capabilities.supports_network_tracking,
-                supports_app_shielding=req.capabilities.supports_app_shielding,
-                has_usage_permission=req.capabilities.has_usage_permission,
-                has_screen_time_permission=req.capabilities.has_screen_time_permission,
+                supports_network_tracking=caps.supports_network_tracking,
+                supports_app_shielding=caps.supports_app_shielding,
+                has_usage_permission=caps.has_usage_permission,
+                has_screen_time_permission=caps.has_screen_time_permission,
             )
             db.add(capabilities)
 
