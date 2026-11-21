@@ -1,9 +1,10 @@
 """Digital Wellbeing FastAPI Entrypoint."""
 import logging
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.router import api_router
 from app.core.config import settings
@@ -44,8 +45,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     """Handle explicit HTTP exceptions with standard error contract."""
     code_mapping = {
         400: "BAD_REQUEST",

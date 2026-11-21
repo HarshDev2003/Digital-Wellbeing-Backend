@@ -9,13 +9,20 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import settings
 
-# Configure async engine with connection pooling
+# Configure async engine with connection pooling and Supabase pooler compatibility
+connect_args = {}
+# Supabase transaction pooler (port 6543) or pgbouncer/supavisor requires disabling statement caches in asyncpg
+if ":6543" in settings.DATABASE_URL or "pooler.supabase.com" in settings.DATABASE_URL:
+    connect_args["statement_cache_size"] = 0
+    connect_args["prepared_statement_cache_size"] = 0
+
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.ENVIRONMENT == "development",
     pool_size=20,
     max_overflow=10,
     pool_pre_ping=True,
+    connect_args=connect_args,
 )
 
 # Async session factory

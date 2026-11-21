@@ -14,8 +14,13 @@ class Settings(BaseSettings):
         case_sensitive=True,
     )
 
-    # Database (PostgreSQL only, Zero Redis)
+    # Database (PostgreSQL / Supabase, Zero Redis)
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/digital_wellbeing"
+
+    # Supabase (Optional SDK & direct API integration)
+    SUPABASE_URL: str = ""
+    SUPABASE_ANON_KEY: str = ""
+    SUPABASE_SERVICE_ROLE_KEY: str = ""
 
     # Security & JWT
     JWT_SECRET_KEY: str = "change-this-to-a-secure-random-secret-key-min-32-chars"

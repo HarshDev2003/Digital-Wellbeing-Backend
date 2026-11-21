@@ -113,9 +113,15 @@ backend/
 ## Prerequisites
 
 - **Python**: Version `3.11` or higher
-- **PostgreSQL**: Version `16` or higher
-- **pip** and **virtualenv** (or `uv`)
+- **PostgreSQL / Supabase**: PostgreSQL 16+ or a free cloud database on [Supabase](https://supabase.com)
+- **uv** (strongly recommended, ultra-fast Python package & project manager) or standard **pip** / **venv**
 - **Git**
+
+> [!TIP]
+> **Why `uv`?** `uv` installs packages in seconds, manages virtual environments automatically, and runs scripts/tests reproducibly without activating the virtualenv manually.
+> To install `uv` (if not already installed):
+> - **Windows (PowerShell)**: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+> - **macOS / Linux**: `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
 ---
 
@@ -127,47 +133,79 @@ git clone <repository-url>
 cd backend
 ```
 
-### 2. Create and Activate Virtual Environment
+### 2. Environment Setup with `uv` (Recommended)
+
+Create the virtual environment and install all dependencies in seconds:
+
+```bash
+# 1. Create virtual environment
+uv venv
+
+# 2. Install dependencies (including email-validator, asyncpg, fastapi, pytest, ruff)
+uv pip install -r requirements.txt
+```
+
+*(Alternative: Standard `pip` & `venv`)*
+<details>
+<summary>Click here for traditional pip / venv instructions</summary>
 
 **On Windows (PowerShell):**
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-```
-
-**On Linux / macOS (Bash/Zsh):**
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install Dependencies
-```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment Variables
-Copy `.env.example` to `.env`:
-
+**On Linux / macOS:**
 ```bash
-cp .env.example .env
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
+</details>
 
-Adjust the values in `.env` to match your local setup:
+---
+
+## Supabase Database Configuration
+
+The application is fully compatible with **Supabase PostgreSQL**. You can connect via either Direct Connection (Session mode) or Supabase Connection Pooler (Supavisor / Transaction mode).
+
+### 1. Obtain Supabase Connection String
+In your [Supabase Dashboard](https://supabase.com/dashboard):
+1. Navigate to **Project Settings** -> **Database**.
+2. Under **Connection string**, select **URI**:
+   - **Direct Connection (Recommended, Session mode, Port 5432)**:
+     ```text
+     postgresql+asyncpg://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
+     ```
+   - **Connection Pooler (Transaction mode, Port 6543)**:
+     ```text
+     postgresql+asyncpg://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
+     ```
+   *(Note: Remember to prefix the URI with `postgresql+asyncpg://` for async SQLAlchemy support. The application automatically disables statement caches when connecting via port 6543 pooler).*
+
+### 2. Configure `.env`
+An active `.env` file is located at the project root. Populate it with your Supabase credentials:
 
 ```dotenv
-# Database Connection (AsyncPG format required)
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/digital_wellbeing
+# Database Connection (Supabase asyncpg URI)
+DATABASE_URL=postgresql+asyncpg://postgres:YOUR_PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres
 
-# Security & Cryptography
-JWT_SECRET_KEY=generate_a_secure_random_key_with_at_least_32_characters
+# Supabase API Credentials (Project Settings -> API)
+SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+SUPABASE_ANON_KEY=your_supabase_anon_publishable_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_secret_key
+
+# Security & JWT
+JWT_SECRET_KEY=94e75bb876d5462cf10fba4c185fae44b059dbcd64b6e56ea7ff975bf810ec54
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=15
 REFRESH_TOKEN_EXPIRE_DAYS=30
 
-# External AI Provider (Optional)
-GEMINI_API_KEY=your_gemini_api_key_here
+# External AI Provider (Google Gemini)
+GEMINI_API_KEY=
 
 # Runtime Environment
 ENVIRONMENT=development
@@ -176,35 +214,32 @@ CORS_ORIGINS=["http://localhost:3000","http://127.0.0.1:3000"]
 
 ---
 
-## Database Configuration & Migrations
+## Database Migrations
 
-### 1. Create PostgreSQL Database
-Create the database in PostgreSQL if it does not already exist:
+Once your `DATABASE_URL` in `.env` points to your Supabase instance (or local PostgreSQL), apply the migrations to create all required tables, foreign keys, and indexes:
 
+### Run Migrations with `uv`
 ```bash
-# Using psql
-psql -U postgres -c "CREATE DATABASE digital_wellbeing;"
+uv run alembic upgrade head
 ```
 
-### 2. Apply Alembic Migrations
-Run Alembic to create all relational schemas, unique constraints, and indices:
-
+*(Or if using standard virtualenv):*
 ```bash
 alembic upgrade head
 ```
 
 To roll back one migration:
 ```bash
-alembic downgrade -1
+uv run alembic downgrade -1
 ```
 
 ---
 
 ## Running the Application
 
-### Start Development Server
+### Start Development Server with `uv`
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 The server will initialize on `http://localhost:8000`.
@@ -218,20 +253,23 @@ The server will initialize on `http://localhost:8000`.
 
 ## Testing & Quality Assurance
 
-Run the complete automated test suite (Unit & Integration tests):
+Run the automated test suite with `uv`:
 
 ```bash
-# Run all tests
-pytest tests/ -v
+# Run all unit and integration tests
+uv run pytest tests/ -v
 
 # Run unit tests only
-pytest tests/unit/ -v
+uv run pytest tests/unit/ -v
 
 # Run integration tests only
-pytest tests/integration/ -v
+uv run pytest tests/integration/ -v
 
 # Run tests with test coverage report
-pytest --cov=app tests/
+uv run pytest --cov=app tests/
+
+# Run Ruff linter
+uv run ruff check .
 ```
 
 ---
