@@ -17,6 +17,19 @@ class Settings(BaseSettings):
     # Database (PostgreSQL / Supabase, Zero Redis)
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/digital_wellbeing"
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def assemble_database_url(cls, v: str) -> str:
+        """Ensure database URL uses asyncpg dialect and strip surrounding quotes."""
+        if not v:
+            return v
+        v = v.strip().strip("'\"")
+        if v.startswith("postgres://"):
+            v = "postgresql+asyncpg://" + v[len("postgres://"):]
+        elif v.startswith("postgresql://"):
+            v = "postgresql+asyncpg://" + v[len("postgresql://"):]
+        return v
+
     # Supabase (Optional SDK & direct API integration)
     SUPABASE_URL: str = ""
     SUPABASE_ANON_KEY: str = ""
