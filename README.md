@@ -233,6 +233,19 @@ To roll back one migration:
 uv run alembic downgrade -1
 ```
 
+### Seed Administrative User
+Seed or update an administrative user account in Supabase/PostgreSQL with Argon2id password hashing and full platform consents:
+
+```bash
+# Seed default admin (admin@digitalwellbeing.com / Admin@123456)
+uv run python scripts/seed_admin.py
+
+# Or seed custom credentials
+uv run python scripts/seed_admin.py --email admin@example.com --password "MySecurePassword123!" --timezone "America/New_York"
+```
+
+The script will also output a pre-signed administrative JWT Bearer token ready for instant API calls to `/api/v1/admin/dashboard/overview`.
+
 ---
 
 ## Running the Application
