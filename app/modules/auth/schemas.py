@@ -9,6 +9,7 @@ class UserRegisterRequest(BaseModel):
     """Payload for user account registration."""
     email: EmailStr
     password: str = Field(..., min_length=8, description="Minimum 8 characters password")
+    role: Optional[str] = Field(default="user", pattern="^(user|admin)$", description="'user' or 'admin'")
     timezone: str = Field(default="UTC", description="IANA Timezone, e.g. 'America/New_York'")
 
 
@@ -16,6 +17,7 @@ class UserRegisterResponse(BaseModel):
     """Response returned upon successful user registration."""
     user_id: uuid.UUID
     email: EmailStr
+    role: str = "user"
     timezone: str
     access_token: str
     token_type: str = "bearer"
@@ -34,6 +36,7 @@ class UserLoginResponse(BaseModel):
     token_type: str = "bearer"
     expires_in_seconds: int = 900
     refresh_token: str
+    role: str = "user"
 
 
 class RefreshTokenRequest(BaseModel):
@@ -52,6 +55,7 @@ class UserResponse(BaseModel):
     """User profile response."""
     id: uuid.UUID
     email: EmailStr
+    role: str = "user"
     timezone: str
     is_active: bool
     created_at: datetime

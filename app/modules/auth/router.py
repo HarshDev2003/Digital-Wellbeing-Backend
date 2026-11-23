@@ -44,6 +44,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
     return UserResponse(
         id=current_user.id,
         email=current_user.email,
+        role=current_user.role,
         timezone=current_user.timezone,
         is_active=current_user.is_active,
         created_at=current_user.created_at,

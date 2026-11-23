@@ -1,6 +1,18 @@
 """Base API v1 router consolidating all submodules."""
 from fastapi import APIRouter
 
+from app.modules.admin.router import (
+    admin_auth_router,
+    admin_router,
+    admin_users_router,
+    admin_applications_router,
+    admin_devices_router,
+    admin_analytics_router,
+    admin_sync_router,
+    admin_reports_router,
+    admin_audit_logs_router,
+    admin_administrators_router,
+)
 from app.modules.analytics.router import router as analytics_router
 from app.modules.auth.router import router as auth_router
 from app.modules.consent.router import router as consent_router
@@ -15,6 +27,18 @@ api_router = APIRouter()
 async def api_health():
     """API v1 health status endpoint."""
     return {"status": "ok", "version": "v1"}
+
+# Admin Analytics Dashboard, User Management, Applications, Devices & Analytics
+api_router.include_router(admin_auth_router)
+api_router.include_router(admin_router)
+api_router.include_router(admin_users_router)
+api_router.include_router(admin_applications_router)
+api_router.include_router(admin_devices_router)
+api_router.include_router(admin_analytics_router)
+api_router.include_router(admin_sync_router)
+api_router.include_router(admin_reports_router)
+api_router.include_router(admin_audit_logs_router)
+api_router.include_router(admin_administrators_router)
 
 # User Story 1: Identity, Devices & Consent
 api_router.include_router(auth_router)

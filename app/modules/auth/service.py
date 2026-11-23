@@ -50,6 +50,7 @@ class AuthService:
         new_user = User(
             email=email_clean,
             password_hash=hashed_pw,
+            role=req.role or "user",
             timezone=req.timezone,
             is_active=True,
         )
@@ -57,13 +58,14 @@ class AuthService:
         await db.flush()
 
         access_token = create_access_token(
-            {"sub": str(new_user.id), "email": new_user.email},
+            {"sub": str(new_user.id), "email": new_user.email, "role": new_user.role},
             expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
         )
 
         return UserRegisterResponse(
             user_id=new_user.id,
             email=new_user.email,
+            role=new_user.role,
             timezone=new_user.timezone,
             access_token=access_token,
             token_type="bearer",
@@ -91,7 +93,7 @@ class AuthService:
             )
 
         access_token = create_access_token(
-            {"sub": str(user.id), "email": user.email},
+            {"sub": str(user.id), "email": user.email, "role": user.role},
             expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
         )
         raw_refresh_token = str(uuid.uuid4())
@@ -112,6 +114,7 @@ class AuthService:
             token_type="bearer",
             expires_in_seconds=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             refresh_token=raw_refresh_token,
+            role=user.role,
         )
 
     @staticmethod
@@ -145,7 +148,7 @@ class AuthService:
             )
 
         access_token = create_access_token(
-            {"sub": str(user.id), "email": user.email},
+            {"sub": str(user.id), "email": user.email, "role": user.role},
             expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
         )
         return access_token

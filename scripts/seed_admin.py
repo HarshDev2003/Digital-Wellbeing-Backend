@@ -19,13 +19,17 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from app.core.database import AsyncSessionLocal, engine
 from app.core.security import create_access_token, hash_password
-from app.modules.auth.models import User
+from app.modules.auth.models import User, RefreshToken
 from app.modules.consent.models import UserConsent
+from app.modules.devices.models import Device, DeviceCapability
+from app.modules.goals_limits.models import AppCategory, UsageGoal, AppLimit, AppLimitViolation
+from app.modules.usage_ingestion.models import AppUsageEvent, ScreenActivityEvent
+from app.modules.usage_processing.models import DailyUsageSummary, AppDailySummary
 
 
-async def seed_admin(email: str, password: str, timezone: str) -> None:
+async def seed_admin(email: str, password: str, timezone: str, role: str = "admin") -> None:
     """Create or update an administrative user account."""
-    print(f"Connecting to database and seeding admin: {email}...")
+    print(f"Connecting to database and seeding admin: {email} (role: {role})...")
 
     async with AsyncSessionLocal() as session:
         # Check if user already exists
@@ -39,6 +43,7 @@ async def seed_admin(email: str, password: str, timezone: str) -> None:
             print(f"[!] User with email '{email}' already exists. Updating credentials...")
             user.password_hash = password_hash
             user.timezone = timezone
+            user.role = role
             user.is_active = True
             action = "UPDATED"
         else:
@@ -47,6 +52,7 @@ async def seed_admin(email: str, password: str, timezone: str) -> None:
                 email=email,
                 password_hash=password_hash,
                 timezone=timezone,
+                role=role,
                 is_active=True,
             )
             session.add(user)
@@ -135,9 +141,16 @@ def parse_args():
         default=os.getenv("ADMIN_TIMEZONE", "UTC"),
         help="Admin user timezone (default: UTC or ADMIN_TIMEZONE env)",
     )
+    parser.add_argument(
+        "--role",
+        type=str,
+        choices=["admin", "user"],
+        default=os.getenv("ADMIN_ROLE", "admin"),
+        help="User role (default: admin)",
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    asyncio.run(seed_admin(email=args.email, password=args.password, timezone=args.timezone))
+    asyncio.run(seed_admin(email=args.email, password=args.password, timezone=args.timezone, role=args.role))
